@@ -1,0 +1,8 @@
+body { background: #fff8f4; }
+.navbar-brand small { font-weight: normal; }
+.card { border: 1px solid #f1d8c5; }
+.btn-primary { background:#c0392b; border-color:#c0392b; }
+.btn-primary:hover { background:#a32d20; border-color:#a32d20; }
+.text-primary { color:#c0392b !important; }
+table th { white-space: nowrap; }
+.badge { font-weight: 500; }
