@@ -90,21 +90,21 @@ Aplicación en <http://localhost:5173>.
 
 Los diagramas extraídos del informe se encuentran en [`docs/diagramas/`](docs/diagramas):
 
-| Archivo                       | Descripción                                  |
-|-------------------------------|----------------------------------------------|
-| `00_logo.png`                 | Logo institucional “Refugio Amor de 4 Patas” |
-| `01_organigrama.png`          | Organigrama del refugio                      |
-| `02_diagrama_contexto.png`    | Diagrama de contexto del sistema             |
-| `03_dfd_nivel0.png` / `04`    | Diagrama de Flujo de Datos (Nivel 0/1)       |
-| `05_diagrama_entidades.png`   | Diagrama relacional / FDO                    |
-| `06_casos_de_uso.png`         | Casos de uso por actor                       |
+| Archivo                              | Descripción                                  |
+|--------------------------------------|----------------------------------------------|
+| `00_logo.jpeg`                       | Logo institucional “Refugio Amor de 4 Patas” |
+| `01_organigrama.png`                 | Organigrama del refugio                      |
+| `02_metodologia_agil.png`            | Metodología ágil aplicada al proyecto        |
+| `03_metodologia_tradicional.png`     | Comparativa metodología tradicional          |
+| `04_diagrama_contexto.png`           | Diagrama de contexto del sistema             |
+| `05_diagrama_fdo.png`                | Diagrama de Flujo de Datos / FDO             |
+| `06_casos_de_uso.png`                | Casos de uso por actor                       |
 
 ## Mapa de funcionalidades vs. diagramas
 
-* **Diagrama de contexto** → Endpoints REST públicos para registro / login y consulta de animales; flujo bidireccional con cada actor desde el frontend.
-* **DFD nivel 0/1** → Procesos `Animales`, `Adopciones`, `Historial Médico`, `Donaciones`, `Voluntariado`, `Reportes`; cada uno con su router en `backend/app/routers/`.
-* **Diagrama relacional (FDO)** → Modelos SQLAlchemy en `backend/app/models.py` (Usuario, Animal, Adopcion, HistorialMedico, Donacion, Actividad, Inscripcion).
-* **Casos de uso** → Páginas y rutas protegidas por rol en el frontend; permisos enforced en el backend con `Depends(require_roles(...))`.
+* **Diagrama de contexto (`04`)** → Endpoints REST públicos para registro / login y consulta de animales; flujo bidireccional con cada actor desde el frontend.
+* **Diagrama FDO (`05`)** → Procesos `Animales`, `Adopciones`, `Historial Médico`, `Donaciones`, `Voluntariado`, `Reportes`, y entidades persistidas como modelos SQLAlchemy en `backend/app/models.py` (Usuario, Animal, Adopcion, HistorialMedico, Donacion, Actividad, Inscripcion).
+* **Casos de uso (`06`)** → Páginas y rutas protegidas por rol en el frontend; permisos enforced en el backend con `Depends(require_roles(...))`.
 
 ## Scripts útiles
 
