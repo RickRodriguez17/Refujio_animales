@@ -15,27 +15,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'crear
     $trat = trim($_POST['tratamiento'] ?? '');
     $obs = trim($_POST['observaciones'] ?? '');
     $fecha = $_POST['fecha'] ?? date('Y-m-d');
+
+    // veterinario_id: si el usuario es vet, es el; si es admin, lo elige del select.
+    if ($u['rol'] === 'veterinario') {
+        $vetId = (int)$u['id'];
+    } else {
+        $vetId = (int)($_POST['veterinario_id'] ?? 0);
+    }
+
     if (!in_array($tipo, ['consulta','vacuna','tratamiento','cirugia'], true) || !$animal_id) {
         $err = 'Datos invalidos.';
+    } elseif ($vetId <= 0) {
+        $err = 'Selecciona el veterinario que atendio al animal.';
     } else {
-        // Solo el veterinario o admin pueden registrar; veterinario_id = vet logueado o, si admin, el primer vet.
-        $vetId = $u['id'];
-        if ($u['rol'] === 'admin') {
-            $row = db()->query("SELECT id FROM usuarios WHERE rol='veterinario' AND activo=1 LIMIT 1")->fetch();
-            $vetId = $row ? (int)$row['id'] : (int)$u['id'];
+        // Verificar que el vet exista y este activo.
+        $check = db()->prepare("SELECT 1 FROM usuarios WHERE id=? AND rol='veterinario' AND activo=1");
+        $check->execute([$vetId]);
+        if (!$check->fetchColumn()) {
+            $err = 'El veterinario indicado no existe o no esta activo.';
+        } else {
+            $stmt = db()->prepare("INSERT INTO historial_medico (animal_id, veterinario_id, tipo, diagnostico, vacuna, tratamiento, observaciones, fecha) VALUES (?,?,?,?,?,?,?,?)");
+            $stmt->execute([$animal_id, $vetId, $tipo, $diag ?: null, $vac ?: null, $trat ?: null, $obs ?: null, $fecha]);
+            // Actualizar estado del animal segun el tipo.
+            if ($tipo === 'tratamiento' || $tipo === 'cirugia') {
+                db()->prepare("UPDATE animales SET estado='en_tratamiento' WHERE id=? AND estado='disponible'")->execute([$animal_id]);
+            }
+            flash_set('ok', 'Atencion medica registrada.');
+            header("Location: {$BASE_URL}/historial_medico.php"); exit;
         }
-        $stmt = db()->prepare("INSERT INTO historial_medico (animal_id, veterinario_id, tipo, diagnostico, vacuna, tratamiento, observaciones, fecha) VALUES (?,?,?,?,?,?,?,?)");
-        $stmt->execute([$animal_id, $vetId, $tipo, $diag ?: null, $vac ?: null, $trat ?: null, $obs ?: null, $fecha]);
-        // Actualizar estado del animal segun el tipo.
-        if ($tipo === 'tratamiento' || $tipo === 'cirugia') {
-            db()->prepare("UPDATE animales SET estado='en_tratamiento' WHERE id=? AND estado='disponible'")->execute([$animal_id]);
-        }
-        flash_set('ok', 'Atencion medica registrada.');
-        header("Location: {$BASE_URL}/historial_medico.php"); exit;
     }
 }
 
 $animales = db()->query("SELECT id, nombre FROM animales ORDER BY nombre")->fetchAll();
+$veterinarios = db()->query("SELECT id, nombre FROM usuarios WHERE rol='veterinario' AND activo=1 ORDER BY nombre")->fetchAll();
 $rows = db()->query("SELECT hm.*, an.nombre AS animal_nombre, u.nombre AS vet_nombre
     FROM historial_medico hm
     JOIN animales an ON an.id = hm.animal_id
@@ -62,6 +74,20 @@ include __DIR__ . '/includes/header.php';
         <?php endforeach; ?>
       </select>
     </div>
+    <?php if ($u['rol'] === 'admin'): ?>
+    <div class="col-md-3">
+      <label class="form-label small">Veterinario *</label>
+      <select class="form-select" name="veterinario_id" required>
+        <option value="">Selecciona...</option>
+        <?php foreach ($veterinarios as $v): ?>
+          <option value="<?= (int)$v['id'] ?>"><?= e($v['nombre']) ?></option>
+        <?php endforeach; ?>
+      </select>
+      <?php if (empty($veterinarios)): ?>
+        <small class="text-danger">No hay veterinarios activos. Crea uno desde Usuarios.</small>
+      <?php endif; ?>
+    </div>
+    <?php endif; ?>
     <div class="col-md-2">
       <label class="form-label small">Tipo *</label>
       <select class="form-select" name="tipo" required>
@@ -79,7 +105,7 @@ include __DIR__ . '/includes/header.php';
       <label class="form-label small">Diagnostico</label>
       <input class="form-control" name="diagnostico">
     </div>
-    <div class="col-md-2">
+    <div class="col-md-3">
       <label class="form-label small">Vacuna / Tratamiento</label>
       <input class="form-control" name="vacuna" placeholder="Nombre vacuna">
     </div>

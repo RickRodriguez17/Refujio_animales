@@ -14,7 +14,13 @@ function db(): PDO {
             ]);
         } catch (PDOException $e) {
             http_response_code(500);
-            die("No se pudo conectar a la base de datos: " . htmlspecialchars($e->getMessage()) . "<br><br>Sugerencia: ejecuta primero <a href='install.php'>install.php</a> y revisa includes/config.php.");
+            die(
+                "No se pudo conectar a la base de datos: "
+                . htmlspecialchars($e->getMessage())
+                . "<br><br>Sugerencia: importa el archivo <code>db.sql</code> desde phpMyAdmin"
+                . " (crea la base <code>refujio_de_animales</code>) y verifica las credenciales en"
+                . " <code>includes/config.php</code>."
+            );
         }
     }
     return $pdo;

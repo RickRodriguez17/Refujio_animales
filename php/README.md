@@ -1,6 +1,6 @@
 # Huellitas de Amor (PHP + MySQL)
 
-Versión PHP del sistema del refugio. Misma idea del informe (5 roles, animales, adopciones, historial médico, donaciones, voluntariado, reportes), pero hecha con PHP plano + MySQL para correr fácil en XAMPP / WAMP / MAMP.
+Versión PHP del sistema del refugio. Misma idea del informe (5 roles, animales, adopciones, historial médico, donaciones, voluntariado, reportes), hecha con PHP plano + MySQL para correr fácil en XAMPP / WAMP / MAMP / Laragon.
 
 ## Requisitos
 
@@ -8,14 +8,17 @@ Versión PHP del sistema del refugio. Misma idea del informe (5 roles, animales,
 - MySQL / MariaDB (con XAMPP es lo que viene por defecto).
 - Apache (o `php -S` para desarrollo).
 
+> No necesitas Composer ni librerías extra: el sistema usa PDO y `password_hash` que ya vienen con PHP.
+
 ## Instalación rápida en XAMPP
 
 1. Copia la carpeta `php/` dentro de `htdocs`. Por ejemplo: `C:\xampp\htdocs\php\`.
 2. Inicia Apache y MySQL desde el panel de XAMPP.
-3. (Opcional) Edita `php/includes/config.php` si usas otro usuario / contraseña de MySQL. Por defecto usa `root` sin contraseña, que es lo de XAMPP.
-4. Abre **una sola vez** en tu navegador: <http://localhost/php/install.php>
-   - Crea la base **`DB_REFUJIO`**, todas las tablas y datos demo (5 usuarios, 5 animales, 1 adopción pendiente, 1 atención médica, 2 donaciones, 1 actividad de voluntariado).
+3. Abre phpMyAdmin (<http://localhost/phpmyadmin>), entra a **Importar** y selecciona el archivo `php/db.sql`. Esto crea la base **`refujio_de_animales`**, todas las tablas y los datos de demostración (5 usuarios, 5 animales, 1 adopción pendiente, 1 atención médica, 2 donaciones y 1 actividad de voluntariado).
+4. (Opcional) Si tu usuario / contraseña de MySQL no son `root` sin contraseña, edita `php/includes/config.php`.
 5. Listo. Entra a <http://localhost/php/login.php>.
+
+> También puedes importar desde la consola: `mysql -u root -p < php/db.sql`.
 
 ## Usuarios demo
 
