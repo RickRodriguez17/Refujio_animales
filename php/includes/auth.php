@@ -96,6 +96,17 @@ function estado_animal_badge(string $estado): string {
     return "<span class='badge bg-{$cls}'>" . e($lbl) . "</span>";
 }
 
+function especie_emoji(string $especie): string {
+    $map = [
+        'perro'  => '🐶',
+        'gato'   => '🐱',
+        'conejo' => '🐰',
+        'ave'    => '🐦',
+        'otro'   => '🐾',
+    ];
+    return $map[strtolower($especie)] ?? '🐾';
+}
+
 function estado_adopcion_badge(string $estado): string {
     $cls = [
         'pendiente' => 'warning',

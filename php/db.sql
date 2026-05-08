@@ -67,6 +67,7 @@ CREATE TABLE `animales` (
   `descripcion` TEXT,
   `estado` ENUM('disponible','adoptado','en_tratamiento','no_disponible') NOT NULL DEFAULT 'disponible',
   `fecha_ingreso` DATE DEFAULT NULL,
+  `foto` VARCHAR(255) DEFAULT NULL,
   `creado_en` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 

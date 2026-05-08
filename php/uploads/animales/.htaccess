@@ -1,0 +1,6 @@
+# Esta carpeta solo guarda im\u00e1genes subidas. Nunca debe ejecutarse PHP aqu\u00ed.
+<FilesMatch "\.(php|phtml|phps|cgi|pl|py|sh|exe)$">
+    Require all denied
+</FilesMatch>
+
+Options -Indexes
