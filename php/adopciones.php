@@ -13,10 +13,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'decid
     $estado = $_POST['estado'] ?? '';
     $obs = trim($_POST['observaciones'] ?? '');
     if (in_array($estado, ['aprobada','rechazada'], true)) {
-        $ad = db()->prepare("SELECT * FROM adopciones WHERE id = ?");
+        $ad = db()->prepare("SELECT a.*, an.estado AS animal_estado FROM adopciones a JOIN animales an ON an.id = a.animal_id WHERE a.id = ?");
         $ad->execute([$id]);
         $row = $ad->fetch();
-        if ($row) {
+        if (!$row) {
+            flash_set('error', 'Solicitud no encontrada.');
+        } elseif ($row['estado'] !== 'pendiente') {
+            flash_set('error', 'La solicitud ya fue resuelta.');
+        } elseif ($estado === 'aprobada' && $row['animal_estado'] !== 'disponible') {
+            flash_set('error', 'No se puede aprobar: el animal ya no esta disponible.');
+        } else {
             db()->beginTransaction();
             db()->prepare("UPDATE adopciones SET estado=?, observaciones=?, fecha_resolucion=NOW() WHERE id=?")
                 ->execute([$estado, $obs, $id]);
